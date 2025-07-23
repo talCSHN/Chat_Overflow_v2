@@ -61,6 +61,7 @@ namespace Client.Models
                 RecvBuf = new byte[1024];
                 int size = socket.Receive(RecvBuf);
                 string text = Encoding.UTF8.GetString(RecvBuf, 0, size - 1).Trim();
+                TaskQueue.Enqueue(text);
             }
             catch (Exception ex)
             {
