@@ -5,7 +5,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 
 namespace Client.Models
 {
@@ -35,7 +37,7 @@ namespace Client.Models
             get => recvBuf;
             set => recvBuf = value;
         }
-        Queue<string> TaskQueue = new Queue<string>();
+
         public event Action<string> MessageReceived;
 
         public async Task MakeConnection(string ip, int port)
@@ -54,19 +56,42 @@ namespace Client.Models
                 }
             });
         }
-        public async Task StartReceiving()
+        public async Task SendToSever(string message)
         {
             try
             {
-                RecvBuf = new byte[1024];
-                int size = socket.Receive(RecvBuf);
-                string text = Encoding.UTF8.GetString(RecvBuf, 0, size - 1).Trim();
-                TaskQueue.Enqueue(text);
+                SendBuf = Encoding.UTF8.GetBytes(message);
+                await socket.SendAsync(new ArraySegment<byte>(SendBuf));
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine($"Send Error: {ex.Message}");
             }
+        }
+        public async Task StartReceiving()
+        {
+            while (true)
+            {
+                try
+                {
+                    RecvBuf = new byte[1024];
+                    int size = await socket.ReceiveAsync(new ArraySegment<byte>(RecvBuf), SocketFlags.None);
+                    if (size == 0)
+                    {
+                        Console.WriteLine("Connection Closed");
+                        break;
+                    }
+                    string text = Encoding.UTF8.GetString(RecvBuf, 0, size - 1).Trim();
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        MessageReceived?.Invoke(text);
+                    });                   
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Receive Error: {ex.Message}");
+                }
+            }      
         }
     }
 }
