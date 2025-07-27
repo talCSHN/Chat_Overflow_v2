@@ -1,4 +1,5 @@
 ﻿using Client.Models;
+using Client.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -8,11 +9,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Client.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
+        private UserControl currentView;
+        public UserControl CurrentView
+        {
+            get => currentView;
+            set => SetProperty(ref currentView, value);
+        }
+
         private readonly ClientSocket client = ClientSocket.Instance;
 
         [ObservableProperty]
@@ -30,7 +39,7 @@ namespace Client.ViewModels
         private void OnMessageReceived(string msg)
         {
             Console.WriteLine("MainViewModel MessageReceived Callback");
-            string[] msgFromServer = msg.Split(' ');    // LOGINOK Username Seat
+            string[] msgFromServer = msg.Split(' ');    // LOGIN Username Seat
             if (!isAlreadyAdded && msgFromServer[0] == "LOGIN" && msgFromServer[1] == Name &&  msgFromServer[2] == Seat)
             {
                 Application.Current.Dispatcher.Invoke(() =>
@@ -38,11 +47,18 @@ namespace Client.ViewModels
                     Character studentOrTutor = new Character(msgFromServer[1], Convert.ToInt32(msgFromServer[2]));
                     Manager.AddParticipant(studentOrTutor);
                     Console.WriteLine("채팅방 입장");
+                    var vm = new ChatViewModel(msgFromServer[1], Convert.ToInt32(msgFromServer[2]));
+                    var v = new ChatView
+                    {
+                        DataContext = vm,
+                    };
+                    CurrentView = v;
+                    isAlreadyAdded = true;
                 });
             }
             else if (msgFromServer[0] == "LOGIN")
             {
-                if (msgFromServer[1] == Name) return;
+                //if (msgFromServer[1] == Name) return;
                 if (CharacterManager.Instance.Participants.Any(c => c.UserName == msgFromServer[1])) return;
                 var newParticipant = new Character(msgFromServer[1], Convert.ToInt32(msgFromServer[2]));
                 Manager.AddParticipant(newParticipant);
@@ -82,7 +98,7 @@ namespace Client.ViewModels
             Console.WriteLine($"로그인 요청한 유저 이름/좌석번호 : {message}");
             try
             {
-                await client.SendToSever(message);
+                await client.SendToServer(message);
             }
             catch (Exception ex)
             {

@@ -56,12 +56,17 @@ namespace Client.Models
                 }
             });
         }
-        public async Task SendToSever(string message)
+        public async Task SendToServer(string message)
         {
             try
             {
                 SendBuf = Encoding.UTF8.GetBytes(message);
                 await socket.SendAsync(new ArraySegment<byte>(SendBuf));
+                if (socket == null)
+                {
+                    Console.WriteLine("소켓이 아직 연결되지 않았음");
+                    return;
+                }
             }
             catch (Exception ex)
             {
