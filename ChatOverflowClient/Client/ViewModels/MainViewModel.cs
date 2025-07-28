@@ -63,13 +63,13 @@ namespace Client.ViewModels
                 var newParticipant = new Character(msgFromServer[1], Convert.ToInt32(msgFromServer[2]));
                 Manager.AddParticipant(newParticipant);
             }
-            else
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Console.WriteLine("연결 실패 " + msg);
-                });
-            }
+            //else
+            //{
+            //    Application.Current.Dispatcher.Invoke(() =>
+            //    {
+            //        Console.WriteLine("연결 실패 " + msg);
+            //    });
+            //}
         }
 
         // 생성자에서는 await를 쓸수없기때문에 Task타입으로 만드는 것 대신 void로 만들었음

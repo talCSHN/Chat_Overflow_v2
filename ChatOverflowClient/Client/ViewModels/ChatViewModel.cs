@@ -14,7 +14,6 @@ namespace Client.ViewModels
     public partial class ChatViewModel : ObservableObject
     {
         private readonly ClientSocket client = ClientSocket.Instance;
-        // ChatMessages
         [ObservableProperty]
         private ObservableCollection<Character> currentParticipants;
         [ObservableProperty]
@@ -67,7 +66,7 @@ namespace Client.ViewModels
                     }
                     foreach (var participant in CurrentParticipants)
                     {
-                        Console.WriteLine($"참가자 {participant} ## 콘솔 디버깅용");
+                        Console.WriteLine($"참가자 업데이트 {participant.UserName} {participant.SeatNo}");
                     }
                 });
             }
