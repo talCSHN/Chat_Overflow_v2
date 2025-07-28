@@ -51,7 +51,8 @@ namespace Client.ViewModels
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    ChatMessages.Add($"{msgFromServer[1]} {msgFromServer[2]} : {msgFromServer[3]}");
+                    string chatMessage = msg.Substring(5);
+                    ChatMessages.Add(chatMessage);
                 });
             }
             else if (msgFromServer[0] == "LOGIN")
