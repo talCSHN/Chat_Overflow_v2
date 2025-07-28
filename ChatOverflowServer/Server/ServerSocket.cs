@@ -33,11 +33,11 @@ namespace Server
                 {
                     clientList.Add(client);
                 }
-                foreach (var msg in chatHistory)
-                {
-                    byte[] history = Encoding.UTF8.GetBytes(msg + "\n");
-                    client.Send(history);
-                }
+                //foreach (var msg in chatHistory)
+                //{
+                //    byte[] history = Encoding.UTF8.GetBytes(msg + "\n");
+                //    client.Send(history);
+                //}
                 //await HandleClientAsync(client);  // 이렇게 하면 현재 클라이언트 처리하는동안 다른 클라이언트 못받음
                 _ =  HandleClientAsync(client);
             }
@@ -107,7 +107,7 @@ namespace Server
             {
                 chatHistory.Add(msg);
             }
-            chatHistory.ForEach(x => Console.WriteLine(x.ToString()));
+            //chatHistory.ForEach(x => Console.WriteLine(x.ToString()));
             Broadcast(msg);
         }
     }
