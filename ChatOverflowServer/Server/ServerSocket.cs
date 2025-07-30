@@ -13,6 +13,7 @@ namespace Server
         private Socket listener;
         private static List<Socket> clientList = new List<Socket>();
         private static List<string> chatHistory = new List<string>();
+        private static List<string> participants = new List<string>();
         private static object lockObj = new object();
 
         public async Task StartListening(int port)
@@ -29,15 +30,7 @@ namespace Server
                 {
                     Console.WriteLine("클라이언트 접속 완료");
                 }
-                lock (lockObj)
-                {
-                    clientList.Add(client);
-                }
-                //foreach (var msg in chatHistory)
-                //{
-                //    byte[] history = Encoding.UTF8.GetBytes(msg + "\n");
-                //    client.Send(history);
-                //}
+                
                 //await HandleClientAsync(client);  // 이렇게 하면 현재 클라이언트 처리하는동안 다른 클라이언트 못받음
                 _ =  HandleClientAsync(client);
             }
@@ -45,7 +38,24 @@ namespace Server
 
         private async Task HandleClientAsync(Socket client)
         {
-            Console.WriteLine("HandleClientAsync Called");
+            lock (lockObj)
+            {
+                clientList.Add(client);
+                foreach (var p in participants)
+                {
+                    string[] info = p.Split(' ');
+                    string loginMsg = $"LOGIN {info[0]} {info[1]}";
+                    byte[] loginData = Encoding.UTF8.GetBytes(loginMsg + "\n");
+                    client.Send(loginData);
+                }
+
+                foreach (var chat in chatHistory)
+                {
+                    byte[] chatData = Encoding.UTF8.GetBytes(chat + "\n");
+                    client.Send(chatData);
+                }
+            }
+            //Console.WriteLine("HandleClientAsync Called");
             byte[] buf = new byte[1024];
             try
             {
@@ -60,6 +70,15 @@ namespace Server
 
                     if (tempBuf[0] == "LOGIN")
                     {
+                        string name = tempBuf[1];
+                        int seat = Convert.ToInt32(tempBuf[2]);
+                        lock (lockObj)
+                        {
+                            if (!participants.Any(p => p.StartsWith(name + " ")))
+                            {
+                                participants.Add($"{name} {seat}");
+                            }
+                        }
                         Broadcast(messageFromClient);
                     }
                     else if (tempBuf[0] == "CHAT")

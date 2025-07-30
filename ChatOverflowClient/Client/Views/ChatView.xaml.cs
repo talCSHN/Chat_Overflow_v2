@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace Client.Views
 {
@@ -20,9 +21,11 @@ namespace Client.Views
     /// </summary>
     public partial class ChatView : UserControl
     {
-        public ChatView()
+        public ChatView(ChatViewModel viewModel)
         {
             InitializeComponent();
+            //viewModel = new ChatViewModel(name, seat);
+            this.DataContext = viewModel;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

@@ -48,10 +48,7 @@ namespace Client.ViewModels
                     Manager.AddParticipant(studentOrTutor);
                     Console.WriteLine("채팅방 입장");
                     var vm = new ChatViewModel(msgFromServer[1], Convert.ToInt32(msgFromServer[2]));
-                    var v = new ChatView
-                    {
-                        DataContext = vm,
-                    };
+                    var v = new ChatView(vm);
                     CurrentView = v;
                     isAlreadyAdded = true;
                 });

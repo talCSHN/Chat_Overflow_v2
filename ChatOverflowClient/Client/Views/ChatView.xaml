@@ -48,7 +48,16 @@
             </Grid.RowDefinitions>
 
             <TextBlock Text="참가자 목록" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
-            <ListBox ItemsSource="{Binding currentParticipants}" Grid.Row="1"/>
+            <ListBox ItemsSource="{Binding CurrentParticipants}" Grid.Row="1">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <Run Text="{Binding UserName}" />
+                            <Run Text="{Binding SeatNo}" />
+                        </TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
     </Grid>
 

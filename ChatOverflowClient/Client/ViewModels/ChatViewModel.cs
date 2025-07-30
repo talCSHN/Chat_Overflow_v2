@@ -63,7 +63,7 @@ namespace Client.ViewModels
                     if (!alreadyExists)
                     {
                         CharacterManager.Instance.AddParticipant(new Character(userName, seatNo));
-                        CurrentParticipants = CharacterManager.Instance.Participants;
+                        CurrentParticipants = new ObservableCollection<Character>(CharacterManager.Instance.Participants);
                     }
                     foreach (var participant in CurrentParticipants)
                     {
