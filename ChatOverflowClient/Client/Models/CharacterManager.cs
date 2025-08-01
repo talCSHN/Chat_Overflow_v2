@@ -22,7 +22,7 @@ namespace Client.Models
         public static CharacterManager Instance
         {
             get => instance;
-            set => instance = value;
+            private set => instance = value;
         }
 
         private CharacterManager()
