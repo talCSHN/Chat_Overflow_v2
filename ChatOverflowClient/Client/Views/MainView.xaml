@@ -8,7 +8,7 @@
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:vm="clr-namespace:Client.ViewModels"
         mc:Ignorable="d"
-        Title="MainView" Height="550" Width= "750">
+        Title="Chat Overflow V2" Height="550" Width= "750">
     <Grid x:Name="MainGrid" >
         <!-- 유저 이름 입력란 -->
         <Grid.RowDefinitions>
